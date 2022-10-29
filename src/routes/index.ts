@@ -25,7 +25,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 });
 
 
-router.post('/sigIn', async (req: Request, res: Response) => {
+router.post('/signIn', async (req: Request, res: Response) => {
     try {
         
         const { password, email } = req.body;
@@ -63,14 +63,16 @@ router.get('/task', (req: Request, res: Response) => {
     ] )
 });
 
-const verifyToken = (req:Request,res:Response,next:NextFunction) => {
+const verifyToken = (req:any,res:any,next:any) => {
+    console.log(req.headers)
     try {
         if(!req.headers.authorization) return res.status(401).json({message: 'Unthorize Request'});
     const token = req.headers.authorization.split(' ')[1];
     if( !token ) return res.status(401).json({message:'Unathorize Request'});
     
-    const payload = jwt.verify(token, 'secretKey');
-    console.log(payload)
+    const payload:any = jwt.verify(token, 'secretKey');
+    req.userId = payload._id;
+    next()
     } catch (e) {
         if (typeof e === "string") {
             throw new Error(e.toUpperCase());
@@ -95,7 +97,11 @@ router.get('/private-task', verifyToken , (req: Request, res: Response) => {
             date: "2019-11-17T20:39:05.211Z"
         }
     ] )
-})
+});
+
+router.get('/profile', verifyToken, (req:any,res: Response) => {
+    res.send(req.userId)
+});
 module.exports = router
 
 
