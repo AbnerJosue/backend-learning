@@ -67,9 +67,24 @@ const createNewTask = async (req: Request, res: Response) => {
     }
 };
 
+
+const deleteTask =async (req: Request, res: Response) => {
+    try {
+        const {
+            _id
+        } = req.body
+        console.log(_id)
+        const removed = await newTasks.findByIdAndRemove(_id);
+        return res.status(200).json({ message: 'removed successFull', removed });
+    } catch (e) {
+        if (e instanceof Error) res.status(400).json({ messageError: e.message });
+    }
+}
+
 export {
     gettingTask,
     createTask,
     gettingnewTask,
-    createNewTask
+    createNewTask,
+    deleteTask
 }
